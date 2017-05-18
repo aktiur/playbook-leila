@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+
+[Unit]
+Description=mosaico-standalone
+
+[Service]
+ExecStart=/usr/bin/npm start
+WorkingDirectory={{ mosaico_repo }}
+Restart=on-failure
+Type=simple
+StandardError=syslog

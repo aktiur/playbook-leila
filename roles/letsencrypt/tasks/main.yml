@@ -1,0 +1,8 @@
+- name: Create letsencrypt webroot directory
+  file: path=/var/www/letsencrypt state=directory mode=0755
+- name: Generate certificates
+  command: /opt/certbot/certbot-auto certonly --webroot -w /var/www/letsencrypt --cert-name {{ letsencrypt_domains[0] }} --expand -d {{ letsencrypt_domains | join(',') }} -m "{{ letsencrypt_email }}" -n --agree-tos
+- name: Install cronjob for letsencrypt renewal
+  cron: name="certbot-auto renew" minute=12 hour=3,9 job="/opt/certbot/certbot-auto renew >> /var/log/letsencrypt-renew.log"
+- name: Install cronjob for nginx reload
+  cron: name="nginx reload" minute=15 hour=3,9 job="systemctl reload nginx"

@@ -1,0 +1,34 @@
+# {{ ansible_managed }}
+
+upstream mosaico {
+  server localhost:3000;
+}
+
+
+server {
+  listen 80;
+
+  server_name {{ mosaico_domain }};
+
+  include /etc/nginx/includes/letsencrypt.conf;
+
+  location / {
+    return 301 https://{{ mosaico_domain }}$request_uri;
+  }
+}
+
+server {
+  listen 443 ssl;
+
+  server_name {{ mosaico_domain }};
+
+  ssl_certificate     /etc/letsencrypt/live/{{ mosaico_domain }}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/{{ mosaico_domain }}/privkey.pem;
+
+  include /etc/nginx/includes/letsencrypt.conf;
+
+  location / {
+    include /etc/nginx/includes/proxy_headers.conf;
+    proxy_pass http://mosaico;
+  }
+}

@@ -1,0 +1,4 @@
+- name: Add Node.js 7.x repositories
+  shell: curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
+- name: Ensure Node.js is installed
+  apt: name=nodejs state=latest update_cache=yes

@@ -1,0 +1,12 @@
+- name: Upgrade apt packages
+  apt: upgrade=dist update_cache=yes
+- name: Ensure build-essential is installed
+  apt: name=build-essential state=present
+- name: Ensure software-properties-common is installed
+  apt: name=software-properties-common state=present
+- name: Ensure git is installed
+  apt: name=git state=present
+- name: add known hosts
+  copy:
+    src: ssh_known_hosts
+    dest: /etc/ssh/ssh_known_hosts

@@ -1,0 +1,16 @@
+---
+ansible_user: root
+mosaico_domain: mosaico.cheysson.fr
+mosaico_smtp_server: smtp.gmail.com
+mosaico_smtp_port: 587
+mosaico_smtp_user: arthur@cheysson.fr
+mosaico_smtp_password: "{{ vaulted_smtp_password }}"
+mosaico_mail_from_name: Arthur Cheysson
+mosaico_mail_from_address: arthur@cheysson.fr
+mosaico_web_users:
+  - username: arthur
+    password: "{{ vaulted_password }}"
+    templates:
+      - leila-mail
+mosaico_secret: "{{ vaulted_mosaico_secret }}"
+letsencrypt_email: arthur@cheysson.fr

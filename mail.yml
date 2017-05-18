@@ -1,0 +1,9 @@
+- include: python2.yml
+
+- name: Install mosaico mail server
+  hosts: mail
+  vars_files:
+  - vault.yml
+  become: true
+  roles:
+    - role: mosaico

@@ -1,0 +1,6 @@
+---
+mosaico_domain:
+mosaico_dependencies:
+  - imagemagick
+mosaico_directory: /opt/mosaico
+mosaico_repo: "{{mosaico_directory}}/src"

@@ -1,0 +1,17 @@
+module.exports = {
+  emailTransport: {
+    host: '{{ mosaico_smtp_server }}',
+    port: '{{ mosaico_smtp_port }}',
+    auth: { user: '{{ mosaico_smtp_user }}', pass: '{{ mosaico_smtp_password }}' }
+  },
+  emailOptions: {
+    from: '{{ mosaico_mail_from_name }} <{{ mosaico_mail_from_address }}>'
+  },
+  sendDefaults: {
+    fromAddress: '{{ mosaico_mail_from_address }}',
+    fromName: '{{ mosaico_mail_from_name }}'
+  },
+  users: {{ mosaico_web_users | to_json }},
+  secret: '{{ mosaico_secret }}',
+  https: false
+};

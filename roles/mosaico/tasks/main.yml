@@ -1,0 +1,66 @@
+---
+- name: ensure dependencies are installed
+  apt: name={{ item }} state=present
+  with_items: "{{ mosaico_dependencies }}"
+
+- name: ensure mosaico directory is created
+  file:
+    state: directory
+    path: "{{ mosaico_directory }}"
+    mode: 755
+
+- name: ensure source has been cloned
+  git:
+    repo: https://github.com/jlm2017/mosaico-standalone.git
+    clone: yes
+    update: yes
+    dest: "{{ mosaico_repo }}"
+    version: master
+  notify:
+    - restart mosaico
+
+- name: ensure template has been cloned
+  git:
+    repo: https://github.com/aktiur/leila-mail.git
+    clone: yes
+    update: yes
+    force: yes
+    dest: "{{ mosaico_repo }}/templates/custom/leila-mail"
+    version: master
+
+- name: ensure npm dependencies are installed
+  npm:
+    path: "{{ mosaico_repo }}"
+  notify:
+    - restart mosaico
+
+- name: install mosaico config file
+  template:
+    src: mosaico_config.js.j2
+    dest: "{{ mosaico_repo }}/config.js"
+  notify:
+    - restart mosaico
+
+- name: install mosaico service file
+  template:
+    src: mosaico.service.j2
+    dest: /etc/systemd/system/mosaico.service
+  notify:
+    - reload systemd
+    - restart mosaico
+
+- name: ensure mosaico service is enabled and started
+  service: name=mosaico state=started enabled=yes
+
+- name: install mosaico nginx server
+  template:
+    src: mosaico_nginx.conf.j2
+    dest: /etc/nginx/sites-available/01-mosaico.conf
+  notify:
+    - reload nginx
+
+- name: ensure mosaico nginx server is enabled
+  file:
+    state: link
+    path: /etc/nginx/sites-enabled/01-mosaico.conf
+    src: ../sites-available/01-mosaico.conf

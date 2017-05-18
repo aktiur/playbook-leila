@@ -1,0 +1,45 @@
+- name: Ensure Nginx is installed
+  apt: name=nginx state=present
+
+- name: Ensure openssl is installed
+  apt: name=openssl state=present
+
+- name: Ensure dhparams have been generated
+  command: openssl dhparam -out /etc/nginx/dhparams.pem 2048 creates=/etc/nginx/dhparams.pem
+
+- name: Ensure nginx is well configured
+  copy: src=etc/nginx/nginx.conf dest=/etc/nginx/nginx.conf
+  notify:
+    - reload nginx
+
+- name: Copy helpful util conf includes
+  copy: src=etc/nginx/includes dest=/etc/nginx/
+  notify:
+    - reload nginx
+
+- name: Ensure default site is not enabled
+  file: path=/etc/nginx/sites-enabled/default state=absent
+
+- name: Ensure basic configuration for letsencrypt is present
+  copy: src=etc/nginx/sites-available/99-letsencrypt.conf dest=/etc/nginx/sites-available/99-letsencrypt.conf
+  register: letsencrypt_conf
+
+- name: Ensure basic configuration for letsencrypt is enabled
+  file:
+    path: /etc/nginx/sites-enabled/99-letsencrypt.conf
+    src: ../sites-available/99-letsencrypt.conf
+    state: link
+
+- name: Reload nginx for letsencrypt
+  service: name=nginx state=reloaded
+  when: letsencrypt_conf.changed
+
+- name: Copy additional nginx.service configuration
+  copy:
+    src: etc/systemd/system/nginx.service.d
+    dest: /etc/systemd/system/
+  notify:
+    - reload systemd
+
+- name: Ensure nginx is started and enabled
+  service: name=nginx enabled=yes state=started

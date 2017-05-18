@@ -1,0 +1,9 @@
+---
+dependencies:
+  - common
+  - node
+  - redis
+  - nginx
+  - name: letsencrypt
+    letsencrypt_domains:
+      - "{{ mosaico_domain }}"
