@@ -7,3 +7,4 @@ dependencies:
   - name: letsencrypt
     letsencrypt_domains:
       - "{{ mosaico_domain }}"
+    when: skip_letsencrypt is not defined
